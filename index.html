@@ -1,301 +1,704 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#070b14">
 <title>ClipGenius AI — The Moment Finder</title>
+
 <style>
-:root{--bg:#070b14;--line:#1d2a40;--text:#edf4ff;--muted:#8fa1bb;--cyan:#52e5ff;--blue:#647bff}
-*{box-sizing:border-box}
-body{margin:0;background:radial-gradient(circle at 75% -10%,#152b4a 0,transparent 36%),var(--bg);color:var(--text);font:15px/1.5 system-ui,sans-serif}
-button,input,select{font:inherit}
-button{cursor:pointer}
-.hidden{display:none!important}
-#intro{position:fixed;inset:0;z-index:20;background:#050914;display:grid;place-items:center;overflow:hidden;transition:opacity .55s,visibility .55s}
-#intro.fade{opacity:0;visibility:hidden}
-.intro-core{position:relative;text-align:center;z-index:2}
-.intro-logo{font-size:clamp(28px,6vw,48px);font-weight:850;letter-spacing:-2px}
-.intro-logo span{color:var(--cyan)}
-.intro-sub{color:#8da8c7;letter-spacing:4px;text-transform:uppercase;font-size:10px;margin-top:8px}
-#network{position:absolute;inset:0;width:100%;height:100%}
-.intro-ring{position:absolute;width:180px;height:180px;border:1px solid #52e5ff33;border-radius:50%;left:50%;top:43%;transform:translate(-50%,-50%);box-shadow:0 0 55px #2fdfff20,inset 0 0 35px #2fdfff12;animation:pulse 1.5s ease-in-out infinite}
-.intro-ring:before,.intro-ring:after{content:"";position:absolute;inset:17px;border:1px dashed #52e5ff55;border-radius:50%;animation:spin 5s linear infinite}
-.intro-ring:after{inset:34px;animation-direction:reverse;animation-duration:3s}
-@keyframes pulse{50%{transform:translate(-50%,-50%) scale(1.1);opacity:.55}}
-@keyframes spin{to{transform:rotate(360deg)}}
-.intro-skip{position:absolute;bottom:26px;right:26px;border:1px solid #31445f;background:#101a2b;color:#c8d8ef;padding:9px 15px;border-radius:99px}
-header{height:72px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:#080e19dd;position:sticky;top:0;z-index:5;backdrop-filter:blur(18px)}
-.brand{font-weight:850;font-size:20px;letter-spacing:-.8px}
-.brand b{color:var(--cyan)}
-.brand small{display:block;color:var(--muted);font-size:9px;letter-spacing:3px}
-.top-right{display:flex;gap:12px;align-items:center}
-.pill{border:1px solid var(--line);padding:7px 12px;border-radius:99px;color:var(--muted);font-size:12px}
-.layout{display:grid;grid-template-columns:230px minmax(0,1fr);min-height:calc(100vh - 72px)}
-aside{border-right:1px solid var(--line);padding:22px 14px;background:#090f1b}
-.nav-label{font-size:10px;color:#637895;letter-spacing:2px;padding:12px}
-.nav{width:100%;border:0;background:transparent;color:#91a4bd;padding:12px;border-radius:10px;text-align:left;margin:3px 0;display:flex;gap:12px;align-items:center}
-.nav.active,.nav:hover{background:#13243a;color:#f1f7ff}
-.nav.active{box-shadow:inset 2px 0 var(--cyan)}
-.nav .ico{width:19px;text-align:center;color:var(--cyan)}
-main{padding:30px;max-width:1440px;width:100%;margin:auto}
-.page{display:none}
-.page.active{display:block}
-.eyebrow{color:var(--cyan);font-size:10px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase}
-.page-title{font-size:clamp(25px,3vw,34px);margin:5px 0 4px;letter-spacing:-1.2px}
-.muted{color:var(--muted)}
-.lead{color:var(--muted);margin:0 0 25px}
-.grid{display:grid;gap:16px}
-.stats{grid-template-columns:repeat(4,minmax(0,1fr));margin:22px 0}
-.card{background:linear-gradient(145deg,#101a2a,#0b1320);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 12px 35px #0002}
-.stat-label{color:var(--muted);font-size:12px}
-.stat-value{font-size:27px;font-weight:800;margin-top:7px}
-.stat-foot{font-size:11px;color:#6f86a5;margin-top:3px}
-.split{grid-template-columns:1.2fr .8fr}
-.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-.section-head h3{margin:0;font-size:16px}
-.btn{border:1px solid #30445f;background:#132239;color:#eaf4ff;padding:11px 16px;border-radius:10px;font-weight:700}
-.btn:hover{filter:brightness(1.18)}
-.btn.primary{background:linear-gradient(100deg,#25bfe4,#6376ff);border:0;color:#06101d}
-.btn.ghost{background:transparent}
-.btn.danger{color:#ff9aaa;border-color:#653044;background:#261321}
-.btn:disabled{opacity:.45;cursor:not-allowed}
-.drop{border:1px dashed #3b5878;background:#0a1524;border-radius:14px;padding:26px;text-align:center;cursor:pointer}
-.drop.drag{border-color:var(--cyan);background:#10243a}
-.drop strong{display:block;font-size:15px;margin:8px}
-.drop input{display:none}
-.field{display:flex;flex-direction:column;gap:7px;margin:12px 0}
-.field label{color:#a9bad0;font-size:12px;font-weight:700}
-.field input,.field select{width:100%;background:#080f1c;color:#edf4ff;border:1px solid #263851;border-radius:9px;padding:12px;outline:none}
-.field input:focus,.field select:focus{border-color:var(--cyan)}
-.notice{border:1px solid #3b4b63;background:#101b2a;border-radius:10px;padding:12px 14px;color:#aebfd5;font-size:12px;margin:12px 0}
-.notice.warn{border-color:#765a2b;background:#241d12}
-.list{display:flex;flex-direction:column;gap:10px}
-.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 14px;background:#0a1321;border:1px solid var(--line);border-radius:11px}
-.row-title{font-weight:700}
-.row-sub{font-size:11px;color:var(--muted)}
-.status{font-size:10px;text-transform:uppercase;letter-spacing:1px;border-radius:99px;padding:5px 8px;background:#17263a;color:#9fb8d7}
-.status.completed{background:#123329;color:#72e7b5}
-.status.failed{background:#3a1924;color:#ff9aaa}
-.status.queued{color:#f4d58a;background:#342b17}
-.empty{padding:28px;text-align:center;color:var(--muted);border:1px dashed #2b3c54;border-radius:12px}
-.clip-row{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}
-.auth-wrap{min-height:100vh;display:grid;place-items:center;padding:20px}
-.auth-card{width:min(440px,100%);padding:30px;background:#0d1727;border:1px solid var(--line);border-radius:18px;box-shadow:0 25px 90px #0007}
-.auth-card .brand{margin-bottom:20px}
-.auth-tabs{display:flex;gap:8px;margin:18px 0}
-.auth-tabs button{flex:1}
-.small{font-size:11px;color:var(--muted)}
-.progress{height:6px;background:#1b2b40;border-radius:99px;overflow:hidden;margin-top:9px}
-.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--blue));width:0;transition:width .3s}
-footer{padding:28px;text-align:center;color:#536985;font-size:11px}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#16263a;border:1px solid #38516e;padding:12px 18px;border-radius:12px;z-index:30;box-shadow:0 10px 35px #0008;max-width:90vw}
-@media(max-width:900px){
-.layout{grid-template-columns:1fr}
-aside{display:flex;overflow:auto;border-right:0;border-bottom:1px solid var(--line);padding:8px}
-.nav-label{display:none}
-.nav{white-space:nowrap;width:auto;padding:10px}
-.stats{grid-template-columns:repeat(2,1fr)}
-.split{grid-template-columns:1fr}
-main{padding:20px}
+:root {
+  --bg:#070b14;
+  --line:#1d2a40;
+  --text:#edf4ff;
+  --muted:#8fa1bb;
+  --cyan:#52e5ff;
+  --blue:#647bff;
 }
-@media(max-width:560px){
-header{padding:0 15px;height:62px}
-.layout{min-height:calc(100vh - 62px)}
-main{padding:17px}
-.stats{gap:9px}
-.card{padding:15px}
-.top-right .pill{display:none}
-.page-title{font-size:26px}
-.intro-ring{top:40%;width:145px;height:145px}
+
+* { box-sizing:border-box; }
+
+body {
+  margin:0;
+  background:radial-gradient(circle at 75% -10%,#152b4a 0,transparent 36%),var(--bg);
+  color:var(--text);
+  font:15px/1.5 system-ui,sans-serif;
+}
+
+button,input,select { font:inherit; }
+button { cursor:pointer; }
+.hidden { display:none!important; }
+
+header {
+  height:72px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 28px;
+  background:#080e19;
+  position:sticky;
+  top:0;
+  z-index:5;
+}
+
+.brand {
+  font-weight:850;
+  font-size:20px;
+  letter-spacing:-.8px;
+}
+
+.brand b { color:var(--cyan); }
+
+.brand small {
+  display:block;
+  color:var(--muted);
+  font-size:9px;
+  letter-spacing:3px;
+}
+
+.top-right {
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+
+.pill {
+  border:1px solid var(--line);
+  padding:7px 12px;
+  border-radius:99px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.layout {
+  display:grid;
+  grid-template-columns:230px minmax(0,1fr);
+  min-height:calc(100vh - 72px);
+}
+
+aside {
+  border-right:1px solid var(--line);
+  padding:22px 14px;
+  background:#090f1b;
+}
+
+.nav-label {
+  font-size:10px;
+  color:#637895;
+  letter-spacing:2px;
+  padding:12px;
+}
+
+.nav {
+  width:100%;
+  border:0;
+  background:transparent;
+  color:#91a4bd;
+  padding:12px;
+  border-radius:10px;
+  text-align:left;
+  margin:3px 0;
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+
+.nav.active,.nav:hover {
+  background:#13243a;
+  color:#f1f7ff;
+}
+
+.nav.active {
+  box-shadow:inset 2px 0 var(--cyan);
+}
+
+.nav .ico {
+  width:19px;
+  text-align:center;
+  color:var(--cyan);
+}
+
+main {
+  padding:30px;
+  max-width:1440px;
+  width:100%;
+  margin:auto;
+}
+
+.page { display:none; }
+.page.active { display:block; }
+
+.eyebrow {
+  color:var(--cyan);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:2.5px;
+  text-transform:uppercase;
+}
+
+.page-title {
+  font-size:clamp(25px,3vw,34px);
+  margin:5px 0 4px;
+  letter-spacing:-1.2px;
+}
+
+.muted { color:var(--muted); }
+
+.lead {
+  color:var(--muted);
+  margin:0 0 25px;
+}
+
+.grid {
+  display:grid;
+  gap:16px;
+}
+
+.stats {
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  margin:22px 0;
+}
+
+.card {
+  background:linear-gradient(145deg,#101a2a,#0b1320);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:20px;
+  box-shadow:0 12px 35px #0002;
+}
+
+.stat-label {
+  color:var(--muted);
+  font-size:12px;
+}
+
+.stat-value {
+  font-size:27px;
+  font-weight:800;
+  margin-top:7px;
+}
+
+.stat-foot {
+  font-size:11px;
+  color:#6f86a5;
+  margin-top:3px;
+}
+
+.split {
+  grid-template-columns:1.2fr .8fr;
+}
+
+.section-head {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+}
+
+.section-head h3 {
+  margin:0;
+  font-size:16px;
+}
+
+.btn {
+  border:1px solid #30445f;
+  background:#132239;
+  color:#eaf4ff;
+  padding:11px 16px;
+  border-radius:10px;
+  font-weight:700;
+}
+
+.btn:hover { filter:brightness(1.18); }
+
+.btn.primary {
+  background:linear-gradient(100deg,#25bfe4,#6376ff);
+  border:0;
+  color:#06101d;
+}
+
+.btn.ghost { background:transparent; }
+
+.btn.danger {
+  color:#ff9aaa;
+  border-color:#653044;
+  background:#261321;
+}
+
+.btn:disabled {
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+.drop {
+  display:block;
+  border:1px dashed #3b5878;
+  background:#0a1524;
+  border-radius:14px;
+  padding:26px;
+  text-align:center;
+  cursor:pointer;
+}
+
+.drop.drag {
+  border-color:var(--cyan);
+  background:#10243a;
+}
+
+.drop strong {
+  display:block;
+  font-size:15px;
+  margin:8px;
+}
+
+.drop input { display:none; }
+
+.field {
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  margin:12px 0;
+}
+
+.field label {
+  color:#a9bad0;
+  font-size:12px;
+  font-weight:700;
+}
+
+.field input,.field select {
+  width:100%;
+  background:#080f1c;
+  color:#edf4ff;
+  border:1px solid #263851;
+  border-radius:9px;
+  padding:12px;
+  outline:none;
+}
+
+.field input:focus,.field select:focus {
+  border-color:var(--cyan);
+}
+
+.notice {
+  border:1px solid #3b4b63;
+  background:#101b2a;
+  border-radius:10px;
+  padding:12px 14px;
+  color:#aebfd5;
+  font-size:12px;
+  margin:12px 0;
+}
+
+.notice.warn {
+  border-color:#765a2b;
+  background:#241d12;
+}
+
+.list {
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.row {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:13px 14px;
+  background:#0a1321;
+  border:1px solid var(--line);
+  border-radius:11px;
+}
+
+.row-title { font-weight:700; }
+.row-sub { font-size:11px; color:var(--muted); }
+
+.status {
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  border-radius:99px;
+  padding:5px 8px;
+  background:#17263a;
+  color:#9fb8d7;
+}
+
+.status.completed {
+  background:#123329;
+  color:#72e7b5;
+}
+
+.status.failed {
+  background:#3a1924;
+  color:#ff9aaa;
+}
+
+.status.queued {
+  color:#f4d58a;
+  background:#342b17;
+}
+
+.empty {
+  padding:28px;
+  text-align:center;
+  color:var(--muted);
+  border:1px dashed #2b3c54;
+  border-radius:12px;
+}
+
+.auth-wrap {
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:20px;
+}
+
+.auth-card {
+  width:min(440px,100%);
+  padding:30px;
+  background:#0d1727;
+  border:1px solid var(--line);
+  border-radius:18px;
+  box-shadow:0 25px 90px #0007;
+}
+
+.auth-card .brand { margin-bottom:20px; }
+
+.auth-tabs {
+  display:flex;
+  gap:8px;
+  margin:18px 0;
+}
+
+.auth-tabs button { flex:1; }
+
+.small {
+  font-size:11px;
+  color:var(--muted);
+}
+
+.progress {
+  height:6px;
+  background:#1b2b40;
+  border-radius:99px;
+  overflow:hidden;
+  margin-top:9px;
+}
+
+.progress span {
+  display:block;
+  height:100%;
+  background:linear-gradient(90deg,var(--cyan),var(--blue));
+  width:0;
+  transition:width .3s;
+}
+
+footer {
+  padding:28px;
+  text-align:center;
+  color:#536985;
+  font-size:11px;
+}
+
+.toast {
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#16263a;
+  border:1px solid #38516e;
+  padding:12px 18px;
+  border-radius:12px;
+  z-index:30;
+  box-shadow:0 10px 35px #0008;
+  max-width:90vw;
+}
+
+@media(max-width:900px) {
+  .layout { grid-template-columns:1fr; }
+  aside {
+    display:flex;
+    overflow:auto;
+    border-right:0;
+    border-bottom:1px solid var(--line);
+    padding:8px;
+  }
+  .nav-label { display:none; }
+  .nav {
+    white-space:nowrap;
+    width:auto;
+    padding:10px;
+  }
+  .stats { grid-template-columns:repeat(2,1fr); }
+  .split { grid-template-columns:1fr; }
+  main { padding:20px; }
+}
+
+@media(max-width:560px) {
+  header { padding:0 15px; height:62px; }
+  .layout { min-height:calc(100vh - 62px); }
+  main { padding:17px; }
+  .stats { gap:9px; }
+  .card { padding:15px; }
+  .top-right .pill { display:none; }
+  .page-title { font-size:26px; }
 }
 </style>
 </head>
+
 <body>
 
-<div id="intro">
-<canvas id="network"></canvas>
-<div class="intro-ring"></div>
-<div class="intro-core">
-<div class="intro-logo">CLIP<span>GENIUS</span> AI</div>
-<div class="intro-sub">Signal detected · Intelligence online</div>
-</div>
-<button class="intro-skip" id="skipIntro">Skip intro ↗</button>
-</div>
-
+<!-- LOGIN SCREEN -->
 <section id="authScreen" class="auth-wrap hidden">
-<div class="auth-card">
-<div class="brand">CLIP<b>GENIUS</b> AI<small>THE MOMENT FINDER</small></div>
-<h1 style="margin:0">Welcome to the studio</h1>
-<p class="muted">Sign in to find the moments worth sharing.</p>
-<div class="auth-tabs">
-<button class="btn primary" id="showLogin">Sign in</button>
-<button class="btn ghost" id="showSignup">Create account</button>
-</div>
-<form id="authForm">
-<div class="field">
-<label>Email address</label>
-<input id="email" type="email" autocomplete="email" required placeholder="you@example.com">
-</div>
-<div class="field">
-<label>Password</label>
-<input id="password" type="password" autocomplete="current-password" minlength="8" required placeholder="At least 8 characters">
-</div>
-<button class="btn primary" id="authSubmit" style="width:100%">Sign in</button>
-</form>
-<button class="btn ghost" id="resetPassword" style="width:100%;margin-top:8px">Forgot password?</button>
-<p class="small" id="authMessage">Your videos and clips are private to your account.</p>
-</div>
+  <div class="auth-card">
+    <div class="brand">
+      CLIP<b>GENIUS</b> AI
+      <small>THE MOMENT FINDER</small>
+    </div>
+
+    <h1 style="margin:0">Welcome to the studio</h1>
+    <p class="muted">Sign in to find the moments worth sharing.</p>
+
+    <div class="auth-tabs">
+      <button class="btn primary" id="showLogin">Sign in</button>
+      <button class="btn ghost" id="showSignup">Create account</button>
+    </div>
+
+    <form id="authForm">
+      <div class="field">
+        <label>Email address</label>
+        <input id="email" type="email" autocomplete="email" required placeholder="you@example.com">
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input id="password" type="password" autocomplete="current-password" minlength="8" required placeholder="At least 8 characters">
+      </div>
+
+      <button class="btn primary" id="authSubmit" style="width:100%">Sign in</button>
+    </form>
+
+    <button class="btn ghost" id="resetPassword" style="width:100%;margin-top:8px">Forgot password?</button>
+
+    <p class="small" id="authMessage">Your videos and clips are private to your account.</p>
+  </div>
 </section>
 
+<!-- MAIN APP -->
 <div id="app" class="hidden">
+
 <header>
-<div class="brand">CLIP<b>GENIUS</b> AI<small>THE MOMENT FINDER</small></div>
-<div class="top-right">
-<span class="pill" id="userEmail"></span>
-<button class="btn ghost" id="signOut">Sign out</button>
-</div>
+  <div class="brand">
+    CLIP<b>GENIUS</b> AI
+    <small>THE MOMENT FINDER</small>
+  </div>
+
+  <div class="top-right">
+    <span class="pill" id="userEmail"></span>
+    <button class="btn ghost" id="signOut">Sign out</button>
+  </div>
 </header>
 
 <div class="layout">
+
 <aside>
-<div style="width:100%">
-<div class="nav-label">WORKSPACE</div>
-<button class="nav active" data-page="home"><span class="ico">⌂</span>Overview</button>
-<button class="nav" data-page="create"><span class="ico">✦</span>Find clips</button>
-<button class="nav" data-page="projects"><span class="ico">▤</span>My projects</button>
-<button class="nav" data-page="clips"><span class="ico">▶</span>My clips</button>
-<div class="nav-label">ACCOUNT</div>
-<button class="nav" data-page="settings"><span class="ico">⚙</span>Settings</button>
-</div>
+  <div style="width:100%">
+    <div class="nav-label">WORKSPACE</div>
+
+    <button class="nav active" data-page="home"><span class="ico">⌂</span>Overview</button>
+    <button class="nav" data-page="create"><span class="ico">✦</span>Find clips</button>
+    <button class="nav" data-page="projects"><span class="ico">▤</span>My projects</button>
+    <button class="nav" data-page="clips"><span class="ico">▶</span>My clips</button>
+
+    <div class="nav-label">ACCOUNT</div>
+    <button class="nav" data-page="settings"><span class="ico">⚙</span>Settings</button>
+  </div>
 </aside>
 
 <main>
+
+<!-- OVERVIEW -->
 <section class="page active" id="page-home">
-<div class="eyebrow">Your creative command centre</div>
-<h1 class="page-title">Make every second count.</h1>
-<p class="lead">Turn long recordings into short-form moments worth watching.</p>
+  <div class="eyebrow">Your creative command centre</div>
+  <h1 class="page-title">Make every second count.</h1>
+  <p class="lead">Turn long recordings into short-form moments worth watching.</p>
 
-<div class="grid stats">
-<div class="card"><div class="stat-label">Total projects</div><div class="stat-value" id="statProjects">0</div><div class="stat-foot">Your source videos</div></div>
-<div class="card"><div class="stat-label">Clips discovered</div><div class="stat-value" id="statClips">0</div><div class="stat-foot">AI-selected moments</div></div>
-<div class="card"><div class="stat-label">Processing</div><div class="stat-value" id="statProcessing">0</div><div class="stat-foot">Jobs in progress</div></div>
-<div class="card"><div class="stat-label">Completed</div><div class="stat-value" id="statCompleted">0</div><div class="stat-foot">Ready to download</div></div>
-</div>
+  <div class="grid stats">
+    <div class="card">
+      <div class="stat-label">Total projects</div>
+      <div class="stat-value" id="statProjects">0</div>
+      <div class="stat-foot">Your source videos</div>
+    </div>
 
-<div class="grid split">
-<div class="card">
-<div class="section-head"><h3>Recent projects</h3><button class="btn ghost" data-go="projects">View all</button></div>
-<div id="recentJobs" class="list"><div class="empty">Your projects will appear here.</div></div>
-</div>
-<div class="card">
-<div class="section-head"><h3>Start clipping</h3></div>
-<p class="muted">Upload an X livestream replay, YouTube video or another recording you have permission to edit.</p>
-<div class="notice">X and YouTube links can be saved as source references. To process a video, attach the actual video file you are authorised to edit.</div>
-<button class="btn primary" data-go="create" style="width:100%">＋ Create a project</button>
-</div>
-</div>
+    <div class="card">
+      <div class="stat-label">Clips discovered</div>
+      <div class="stat-value" id="statClips">0</div>
+      <div class="stat-foot">AI-selected moments</div>
+    </div>
+
+    <div class="card">
+      <div class="stat-label">Processing</div>
+      <div class="stat-value" id="statProcessing">0</div>
+      <div class="stat-foot">Jobs in progress</div>
+    </div>
+
+    <div class="card">
+      <div class="stat-label">Completed</div>
+      <div class="stat-value" id="statCompleted">0</div>
+      <div class="stat-foot">Ready to download</div>
+    </div>
+  </div>
+
+  <div class="grid split">
+    <div class="card">
+      <div class="section-head">
+        <h3>Recent projects</h3>
+        <button class="btn ghost" data-go="projects">View all</button>
+      </div>
+      <div id="recentJobs" class="list">
+        <div class="empty">Your projects will appear here.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-head"><h3>Start clipping</h3></div>
+      <p class="muted">Upload an X livestream replay, YouTube video or another recording you have permission to edit.</p>
+      <div class="notice">X and YouTube links can be saved as source references. Attach the actual video file you are authorised to edit.</div>
+      <button class="btn primary" data-go="create" style="width:100%">＋ Create a project</button>
+    </div>
+  </div>
 </section>
 
+<!-- CREATE PROJECT -->
 <section class="page" id="page-create">
-<div class="eyebrow">AI clip finder</div>
-<h1 class="page-title">Find the moments.</h1>
-<p class="lead">Upload a source recording, add its original link, and let ClipGenius analyse it.</p>
+  <div class="eyebrow">AI clip finder</div>
+  <h1 class="page-title">Find the moments.</h1>
+  <p class="lead">Upload a source recording, add its original link, and let ClipGenius analyse it.</p>
 
-<div class="grid split">
-<div class="card">
-<div class="section-head"><h3>1. Add your video</h3><span class="status">Private upload</span></div>
-<label class="drop" id="dropZone">
-<div style="font-size:30px">⇧</div>
-<strong>Drop your video here or browse files</strong>
-<span class="muted small">MP4, MOV, WEBM or MKV · up to 500 MB</span>
-<input id="videoFile" type="file" accept="video/mp4,video/quicktime,video/webm,video/x-matroska">
-</label>
-<div id="fileInfo" class="notice hidden"></div>
-<div class="field">
-<label>Original X / YouTube link (optional)</label>
-<input id="sourceUrl" type="url" placeholder="https://youtube.com/watch?v=... or https://x.com/...">
-</div>
-<div class="notice warn"><strong>Important:</strong> A pasted platform URL is stored as a source reference; this build does not bypass platform restrictions or download videos from X/YouTube. Attach the video file you have permission to edit.</div>
-</div>
+  <div class="grid split">
 
-<div class="card">
-<div class="section-head"><h3>2. Clip preferences</h3></div>
-<div class="field">
-<label>Clip length</label>
-<select id="clipLength">
-<option value="15-30">15–30 seconds</option>
-<option value="30-45" selected>30–45 seconds</option>
-<option value="45-60">45–60 seconds</option>
-</select>
-</div>
-<div class="field">
-<label>How many moments?</label>
-<select id="clipCount">
-<option>3</option><option selected>5</option><option>8</option><option>10</option>
-</select>
-</div>
-<div class="field">
-<label>Output format</label>
-<select id="aspect">
-<option value="9:16" selected>Vertical 9:16 · TikTok / Reels / Shorts</option>
-<option value="16:9">Landscape 16:9</option>
-<option value="1:1">Square 1:1</option>
-</select>
-</div>
-<div class="field">
-<label>What should AI prioritise?</label>
-<select id="style">
-<option value="balanced">Best overall moments</option>
-<option value="funny">Funny / entertaining</option>
-<option value="insightful">Insightful / educational</option>
-<option value="debate">Debate / strong opinions</option>
-<option value="high-energy">High energy / reactions</option>
-</select>
-</div>
-<button class="btn primary" id="startJob" style="width:100%">✦ Upload & find my clips</button>
-<div id="uploadProgress" class="hidden">
-<div class="small" id="uploadLabel">Uploading…</div>
-<div class="progress"><span id="uploadBar"></span></div>
-</div>
-</div>
-</div>
+    <div class="card">
+      <div class="section-head">
+        <h3>1. Add your video</h3>
+        <span class="status">Private upload</span>
+      </div>
+
+      <label class="drop" id="dropZone">
+        <div style="font-size:30px">⇧</div>
+        <strong>Drop your video here or browse files</strong>
+        <span class="muted small">MP4, MOV, WEBM or MKV · up to 500 MB</span>
+        <input id="videoFile" type="file" accept="video/mp4,video/quicktime,video/webm,video/x-matroska">
+      </label>
+
+      <div id="fileInfo" class="notice hidden"></div>
+
+      <div class="field">
+        <label>Original X / YouTube link (optional)</label>
+        <input id="sourceUrl" type="url" placeholder="https://youtube.com/watch?v=... or https://x.com/...">
+      </div>
+
+      <div class="notice warn">
+        <strong>Important:</strong> A pasted platform URL is stored as a source reference. This build does not bypass platform restrictions or download videos from X/YouTube. Attach a video file you have permission to edit.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-head"><h3>2. Clip preferences</h3></div>
+
+      <div class="field">
+        <label>Clip length</label>
+        <select id="clipLength">
+          <option value="15-30">15–30 seconds</option>
+          <option value="30-45" selected>30–45 seconds</option>
+          <option value="45-60">45–60 seconds</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>How many moments?</label>
+        <select id="clipCount">
+          <option>3</option>
+          <option selected>5</option>
+          <option>8</option>
+          <option>10</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Output format</label>
+        <select id="aspect">
+          <option value="9:16" selected>Vertical 9:16 · TikTok / Reels / Shorts</option>
+          <option value="16:9">Landscape 16:9</option>
+          <option value="1:1">Square 1:1</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>What should AI prioritise?</label>
+        <select id="style">
+          <option value="balanced">Best overall moments</option>
+          <option value="funny">Funny / entertaining</option>
+          <option value="insightful">Insightful / educational</option>
+          <option value="debate">Debate / strong opinions</option>
+          <option value="high-energy">High energy / reactions</option>
+        </select>
+      </div>
+
+      <button class="btn primary" id="startJob" style="width:100%">✦ Upload & find my clips</button>
+
+      <div id="uploadProgress" class="hidden">
+        <div class="small" id="uploadLabel">Uploading…</div>
+        <div class="progress"><span id="uploadBar"></span></div>
+      </div>
+    </div>
+
+  </div>
 </section>
 
+<!-- PROJECTS -->
 <section class="page" id="page-projects">
-<div class="eyebrow">Your library</div>
-<h1 class="page-title">My projects</h1>
-<p class="lead">Track every video you have submitted.</p>
-<div id="allJobs" class="list"><div class="empty">No projects yet.</div></div>
+  <div class="eyebrow">Your library</div>
+  <h1 class="page-title">My projects</h1>
+  <p class="lead">Track every video you have submitted.</p>
+  <div id="allJobs" class="list"><div class="empty">No projects yet.</div></div>
 </section>
 
+<!-- CLIPS -->
 <section class="page" id="page-clips">
-<div class="eyebrow">Ready to publish</div>
-<h1 class="page-title">My clips</h1>
-<p class="lead">Preview and download your AI-selected moments.</p>
-<div id="allClips" class="list"><div class="empty">Your finished clips will appear here.</div></div>
+  <div class="eyebrow">Ready to publish</div>
+  <h1 class="page-title">My clips</h1>
+  <p class="lead">Preview and download your AI-selected moments.</p>
+  <div id="allClips" class="list"><div class="empty">Your finished clips will appear here.</div></div>
 </section>
 
+<!-- SETTINGS -->
 <section class="page" id="page-settings">
-<div class="eyebrow">Account</div>
-<h1 class="page-title">Settings</h1>
-<p class="lead">Manage your ClipGenius AI account.</p>
-<div class="card">
-<h3>Signed-in account</h3>
-<p id="settingsEmail" class="muted"></p>
-<div class="notice">Your uploads and generated clips are stored in a private bucket. Only your signed-in account can access its own records.</div>
-<button class="btn danger" id="settingsSignOut">Sign out</button>
-</div>
-<div class="card" style="margin-top:16px">
-<h3>Processing setup</h3>
-<p class="muted">The website and private database are connected. AI transcription and rendering require the separate worker service and provider API keys described in the setup guide.</p>
-</div>
+  <div class="eyebrow">Account</div>
+  <h1 class="page-title">Settings</h1>
+  <p class="lead">Manage your ClipGenius AI account.</p>
+
+  <div class="card">
+    <h3>Signed-in account</h3>
+    <p id="settingsEmail" class="muted"></p>
+    <div class="notice">Your uploads and generated clips are stored in a private bucket. Only your signed-in account should access its own records.</div>
+    <button class="btn danger" id="settingsSignOut">Sign out</button>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h3>Processing setup</h3>
+    <p class="muted">AI transcription and video rendering require the separate worker service and provider API keys. Uploading a video does not by itself mean AI processing is complete.</p>
+  </div>
 </section>
+
 </main>
 </div>
 </div>
 
 <div id="toast" class="toast hidden"></div>
+
 <footer>ClipGenius AI · Your content. Your moments. Your control.</footer>
 
 <script type="module">
@@ -304,140 +707,193 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.119.0";
 const SUPABASE_URL = "https://ztkbfgiowoeaahmqshxx.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_ws9ILr14p8iS4hFaOQKSww_5Rj6tsct";
 const BUCKET = "clipgenius-media";
-const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
-let user = null, jobs = [], clips = [], signupMode = false, refreshTimer = null;
+const supabase = createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+let user = null;
+let jobs = [];
+let clips = [];
+let signupMode = false;
+let refreshTimer = null;
+
 const $ = id => document.getElementById(id);
- const intro = $("intro");
-$("skipIntro").addEventListener("click", () => {
-  intro.classList.add("fade");
+
+function toast(message) {
+  $("toast").textContent = message;
+  $("toast").classList.remove("hidden");
+
+  setTimeout(() => {
+    $("toast").classList.add("hidden");
+  }, 4200);
+}
+
+function escapeHtml(value = "") {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[char]));
+}
+
+function niceDate(value) {
+  return value ? new Date(value).toLocaleString() : "";
+}
+
+function setPage(name) {
+  document.querySelectorAll(".page").forEach(page => {
+    page.classList.toggle("active", page.id === "page-" + name);
+  });
+
+  document.querySelectorAll(".nav").forEach(button => {
+    button.classList.toggle("active", button.dataset.page === name);
+  });
+
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+document.querySelectorAll(".nav").forEach(button => {
+  button.addEventListener("click", () => {
+    setPage(button.dataset.page);
+  });
 });
-setTimeout(() => {
-  intro.classList.add("fade");
-}, 2000);
 
-function toast(msg){
- $("toast").textContent=msg;
- $("toast").classList.remove("hidden");
- setTimeout(()=>$("toast").classList.add("hidden"),4200);
-}
+document.querySelectorAll("[data-go]").forEach(button => {
+  button.addEventListener("click", () => {
+    setPage(button.dataset.go);
+  });
+});
 
-function escapeHtml(s=""){
- return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-}
+/* AUTH MODE */
 
-function niceDate(s){return new Date(s).toLocaleString()}
+$("showLogin").onclick = () => {
+  signupMode = false;
 
-function setPage(name){
- document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id==="page-"+name));
- document.querySelectorAll(".nav").forEach(b=>b.classList.toggle("active",b.dataset.page===name));
- window.scrollTo({top:0,behavior:"smooth"});
-}
-
-document.querySelectorAll(".nav").forEach(b=>b.addEventListener("click",()=>setPage(b.dataset.page)));
-document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>setPage(b.dataset.go)));
-
-$("showLogin").onclick=()=>{
- signupMode=false;
- $("authSubmit").textContent="Sign in";
- $("showLogin").className="btn primary";
- $("showSignup").className="btn ghost";
+  $("authSubmit").textContent = "Sign in";
+  $("showLogin").className = "btn primary";
+  $("showSignup").className = "btn ghost";
 };
 
-$("showSignup").onclick=()=>{
- signupMode=true;
- $("authSubmit").textContent="Create account";
- $("showSignup").className="btn primary";
- $("showLogin").className="btn ghost";
+$("showSignup").onclick = () => {
+  signupMode = true;
+
+  $("authSubmit").textContent = "Create account";
+  $("showSignup").className = "btn primary";
+  $("showLogin").className = "btn ghost";
 };
 
-$("authForm").addEventListener("submit",async e=>{
- e.preventDefault();
- $("authSubmit").disabled=true;
- try{
-  const email=$("email").value.trim(),password=$("password").value;
-  const result=signupMode
-   ?await supabase.auth.signUp({email,password})
-   :await supabase.auth.signInWithPassword({email,password});
-  if(result.error)throw result.error;
-  if(signupMode&&!result.data.session){
-   $("authMessage").textContent="Account created. Check your email to confirm, then sign in.";
-   return;
+/* SIGN IN / SIGN UP */
+
+$("authForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  $("authSubmit").disabled = true;
+
+  try {
+    const email = $("email").value.trim();
+    const password = $("password").value;
+
+    const result = signupMode
+      ? await supabase.auth.signUp({email,password})
+      : await supabase.auth.signInWithPassword({email,password});
+
+    if (result.error) throw result.error;
+
+    if (signupMode && !result.data.session) {
+      $("authMessage").textContent =
+        "Account created. Check your email to confirm, then sign in.";
+      return;
+    }
+
+    toast(signupMode ? "Account created." : "Welcome back.");
+
+    await boot();
+
+  } catch (error) {
+    $("authMessage").textContent =
+      error.message || "Authentication failed.";
+
+  } finally {
+    $("authSubmit").disabled = false;
   }
-  toast(signupMode?"Account created.":"Welcome back.");
-  await boot();
- }catch(err){
-  $("authMessage").textContent=err.message||"Authentication failed.";
- }finally{
-  $("authSubmit").disabled=false;
- }
 });
 
-$("resetPassword").onclick=async()=>{
- const email=$("email").value.trim();
- if(!email)return toast("Enter your email address first.");
- const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:location.origin});
- toast(error?error.message:"Password reset email requested.");
+/* PASSWORD RESET */
+
+$("resetPassword").onclick = async () => {
+  const email = $("email").value.trim();
+
+  if (!email) {
+    return toast("Enter your email address first.");
+  }
+
+  const {error} = await supabase.auth.resetPasswordForEmail(
+    email,
+    {redirectTo:location.origin}
+  );
+
+  toast(
+    error
+      ? error.message
+      : "Password reset email requested."
+  );
 };
 
-$("signOut").onclick=$("settingsSignOut").onclick=async()=>{
- await supabase.auth.signOut();
- location.reload();
-};
+/* SIGN OUT */
 
-const dz=$("dropZone"),fileInput=$("videoFile");
-dz.onclick=()=>fileInput.click();
-dz.ondragover=e=>{e.preventDefault();dz.classList.add("drag")};
-dz.ondragleave=()=>dz.classList.remove("drag");
-dz.ondrop=e=>{
- e.preventDefault();
- dz.classList.remove("drag");
- if(e.dataTransfer.files[0]){
-  fileInput.files=e.dataTransfer.files;
-  showFile();
- }
-};
-fileInput.onchange=showFile;
-
-function showFile(){
- const f=fileInput.files[0];
- if(!f){$("fileInfo").classList.add("hidden");return;}
- $("fileInfo").classList.remove("hidden");
- $("fileInfo").textContent=`Selected: ${f.name} · ${(f.size/1024/1024).toFixed(1)} MB`;
+async function signOut() {
+  await supabase.auth.signOut();
+  location.reload();
 }
 
-async function boot(){
- const {data:{session}}=await supabase.auth.getSession();
- user=session?.user||null;
- $("authScreen").classList.toggle("hidden",!!user);
- $("app").classList.toggle("hidden",!user);
- if(!user){clearInterval(refreshTimer);return;}
- $("userEmail").textContent=user.email||"Signed in";
- $("settingsEmail").textContent=user.email||"";
- await refreshData();
- clearInterval(refreshTimer);
- refreshTimer=setInterval(refreshData,7000);
-}
+$("signOut").onclick = signOut;
+$("settingsSignOut").onclick = signOut;
 
-async function refreshData(){
- if(!user)return;
- const [j,c]=await Promise.all([
-  supabase.from("processing_jobs").select("*").order("created_at",{ascending:false}).limit(100),
-  supabase.from("clips").select("*").order("created_at",{ascending:false}).limit(200)
- ]);
- if(j.error){console.error(j.error);return;}
- if(c.error){console.error(c.error);return;}
- jobs=j.data||[];
- clips=c.data||[];
- renderData();
-}
+/* FILE UPLOAD SELECTION */
 
-function jobCard(j){
- return `<div class="row">
- <div style="min-width:0;flex:1">
- <div class="row-title">${escapeHtml(j.title||"Untitled video")}</div>
- <div class="row-sub">${escapeHtml(j.source_type.toUpperCase())} · ${niceDate(j.created_at)} · ${j.progress||0}%</div>
- <div class="progress"><span style="width:${j.progress||0}%"></span></div>
- ${j.error_message?`<div class="row-sub" style="color:#ff9aaa">${escapeHtml(j.error_message)}</div>`:""}
- </div>
- <span class="status ${
+const dz = $("dropZone");
+const fileInput = $("videoFile");
+
+dz.addEventListener("click", event => {
+  if (event.target !== fileInput) {
+    fileInput.click();
+  }
+});
+
+dz.addEventListener("dragover", event => {
+  event.preventDefault();
+  dz.classList.add("drag");
+});
+
+dz.addEventListener("dragleave", () => {
+  dz.classList.remove("drag");
+});
+
+dz.addEventListener("drop", event => {
+  event.preventDefault();
+  dz.classList.remove("drag");
+
+  if (event.dataTransfer.files[0]) {
+    fileInput.files = event.dataTransfer.files;
+    showFile();
+  }
+});
+
+fileInput.addEventListener("change", showFile);
+
+function showFile() {
+  const file = fileInput.files[0];
+
+  if (!file) {
+    $("fileInfo").classList.add("hidden");
+    return;
+  }
+
+  $("fileInfo").classList.remove("hidden");
+
+  $("fileInfo").textContent =
+    `Selected: ${file.name} · ${(file.size / 1024 / 1024).
