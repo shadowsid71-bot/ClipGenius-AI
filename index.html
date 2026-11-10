@@ -308,6 +308,13 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
 let user = null, jobs = [], clips = [], signupMode = false, refreshTimer = null;
 const $ = id => document.getElementById(id);
+ const intro = $("intro");
+$("skipIntro").addEventListener("click", () => {
+  intro.classList.add("fade");
+});
+setTimeout(() => {
+  intro.classList.add("fade");
+}, 2000);
 
 function toast(msg){
  $("toast").textContent=msg;
